@@ -1,0 +1,34 @@
+html, body, #root, .app-wrapper {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-content {
+  flex: 1;
+}
+
+.navbar-custom-font {
+  font-family: 'Open Sans', sans-serif !important;
+  font-weight: bold !important; /* if you want bold too */
+}
+
+
+.category-navbar-custom .nav-link {
+  color:yellow !important;
+  font-family: 'Open Sans', sans-serif !important;  
+  font-size: large;
+ 
+}
+
+.category-navbar-custom .nav-link:hover {
+  color: white !important; /* example hover color */
+}
+
+.banner-image {
+  height:600px; /* or adjust to your desired banner height */
+  object-fit: cover;
+  object-position: center;
+}
