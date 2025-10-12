@@ -6,6 +6,9 @@ import Footer from "./components/Footer";
 import CategoryNavbar from "./components/CategoryNavbar";
 import Sidebar from "./components/Sidebar";
 import ProductsAdmin from "./components/adminFolder/ProductsAdmin";
+import OrdersAdmin from "./components/adminFolder/OrdersAdmin";
+import PaymentsAdmin from "./components/adminFolder/PaymentsAdmin";
+import UsersAdmin from "./components/adminFolder/UsersAdmin";
 import Offers from "./components/misc/Offers";
 import Cart from "./components/Cart";
 import LogIn from "./components/LogIn";
@@ -15,6 +18,8 @@ import "react-toastify/dist/ReactToastify.css";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./components/Dashboard";
 import AdminPanel from "./components/adminFolder/AdminPanel";
+import Logout from "./components/Logout";
+
 function App() {
   return (
     <>
@@ -36,12 +41,24 @@ function App() {
             <div className="app-content">
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/adminpanel/*" element={<AdminPanel />} />
+
                 <Route path="/offers" element={<Offers />} />
+                <Route path="/logout" element={<Logout />} />
 
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/login" element={<LogIn />} />
                 <Route path="/register" element={<Register />} />
+
+                <Route path="/adminpanel" element={<AdminPanel />}>
+                  <Route
+                    index
+                    element={<h2>Welcome to the Admin Dashboard</h2>}
+                  />
+                  <Route path="productsadmin" element={<ProductsAdmin />} />
+                  <Route path="ordersadmin" element={<OrdersAdmin />} />
+                  <Route path="paymentsadmin" element={<PaymentsAdmin />} />
+                  <Route path="usersadmin" element={<UsersAdmin />} />
+                </Route>
                 {/* Protect the dashboard route */}
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route

@@ -1,9 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import ProductsAdmin from "./ProductsAdmin";
-import OrdersAdmin from "./OrdersAdmin";
-import PaymentsAdmin from "./PaymentsAdmin";
-import UsersAdmin from "./UsersAdmin";
+
+import { Outlet } from "react-router-dom";
 
 const AdminPanel = () => {
   return (
@@ -29,16 +27,7 @@ const AdminPanel = () => {
 
       {/* Main Content Area */}
       <div style={{ flex: 1, padding: "1rem" }}>
-        <Routes>
-          <Route path="/productsadmin" element={<ProductsAdmin />} />
-          <Route path="/ordersadmin" element={<OrdersAdmin />} />
-          <Route path="/paymentsadmin" element={<PaymentsAdmin />} />
-          <Route path="/usersadmin" element={<UsersAdmin />} />
-          <Route
-            path="/adminpanel"
-            element={<h2>Welcome to the Admin Dashboard</h2>}
-          />
-        </Routes>
+        <Outlet />
       </div>
     </div>
   );

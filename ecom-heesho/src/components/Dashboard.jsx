@@ -1,16 +1,8 @@
 import React from "react";
-import { Container, Card, Button } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { Container, Card } from "react-bootstrap";
 
 const Dashboard = () => {
-  const navigate = useNavigate();
-  const token = localStorage.getItem("token"); // ✅ Move this outside of JSX
-  console.log("Dashboard token:", token);
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
+  const userName = localStorage.getItem("userName"); // optional
 
   return (
     <Container className="d-flex align-items-center justify-content-center min-vh-100">
@@ -19,12 +11,11 @@ const Dashboard = () => {
         <hr />
         <p>This is a protected page visible only after login.</p>
 
-        {/* ✅ This is now valid JSX */}
-        <p>Your token: {token}</p>
-
-        <Button variant="danger" onClick={handleLogout} className="mt-3">
-          Logout
-        </Button>
+        {userName && (
+          <p>
+            👋 Logged in as: <strong>{userName}</strong>
+          </p>
+        )}
       </Card>
     </Container>
   );

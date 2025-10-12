@@ -7,11 +7,12 @@ export const authenticateSignInUser = (credentials, toast, reset, navigate, setL
 
   try {
     const { user, token } = await login(credentials);
-
+    const userName = user.userName;
     // Save token for future requests
     setAuthToken(token);
     localStorage.setItem("token", token); 
-    console.log('inside authenticate user',token)
+    localStorage.setItem("userName", JSON.stringify(userName));
+    console.log('inside authenticate user',userName,token)
 
     // Dispatch user info to Redux
     dispatch({ type: 'LOGIN_SUCCESS', payload: user });

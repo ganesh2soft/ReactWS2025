@@ -1,9 +1,17 @@
 import React from "react";
 import { Container, Nav, Navbar, Form, FormControl } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png"; // Make sure you have a logo here
 
 function AppNavbar() {
+  const navigate = useNavigate();
+  const userName = localStorage.getItem("userName");
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userName");
+    navigate("/login");
+  };
   return (
     <Navbar bg="light" expand="lg" className="shadow-sm navbar-custom-font">
       <Container fluid>
@@ -54,9 +62,20 @@ function AppNavbar() {
             </Nav.Link>
           </Nav>
           <Nav>
-            <Nav.Link as={Link} to="/login">
-              SignUp/Login
-            </Nav.Link>
+            {userName ? (
+              <>
+                <Navbar.Text className="me-3 text-warning">
+                  👋 Logged in as {userName}
+                </Navbar.Text>
+                <Nav.Link onClick={handleLogout} style={{ cursor: "pointer" }}>
+                  Logout
+                </Nav.Link>
+              </>
+            ) : (
+              <Nav.Link as={Link} to="/login">
+                SignUp/Login
+              </Nav.Link>
+            )}
           </Nav>
           <Nav>
             <Nav.Link as={Link} to="/adminpanel">
