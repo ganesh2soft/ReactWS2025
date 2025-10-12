@@ -33,11 +33,7 @@ function AppNavbar() {
               Home
             </Nav.Link>
           </Nav>
-          <Nav>
-            <Nav.Link as={Link} to="/products">
-              Products
-            </Nav.Link>
-          </Nav>
+
           <Nav>
             <Nav.Link as={Link} to="/offers">
               Offers
@@ -60,6 +56,11 @@ function AppNavbar() {
           <Nav>
             <Nav.Link as={Link} to="/login">
               SignUp/Login
+            </Nav.Link>
+          </Nav>
+          <Nav>
+            <Nav.Link as={Link} to="/adminpanel">
+              Admin Panel
             </Nav.Link>
           </Nav>
 

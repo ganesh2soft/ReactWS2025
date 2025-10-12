@@ -5,8 +5,8 @@ import Home from "./components/Home";
 import Footer from "./components/Footer";
 import CategoryNavbar from "./components/CategoryNavbar";
 import Sidebar from "./components/Sidebar";
-import Products from "./components/Products";
-import Offers from "./components/Offers";
+import ProductsAdmin from "./components/adminFolder/ProductsAdmin";
+import Offers from "./components/misc/Offers";
 import Cart from "./components/Cart";
 import LogIn from "./components/LogIn";
 import Register from "./components/Register";
@@ -14,6 +14,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./components/Dashboard";
+import AdminPanel from "./components/adminFolder/AdminPanel";
 function App() {
   return (
     <>
@@ -35,9 +36,9 @@ function App() {
             <div className="app-content">
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/products" element={<Products />} />
+                <Route path="/adminpanel/*" element={<AdminPanel />} />
                 <Route path="/offers" element={<Offers />} />
-                <Route path="/ordersandreturns" element={<Products />} />
+
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/login" element={<LogIn />} />
                 <Route path="/register" element={<Register />} />
@@ -47,7 +48,7 @@ function App() {
                   path="/dashboard"
                   element={
                     <ProtectedRoute>
-                      <Products />
+                      <AdminPanel />
                     </ProtectedRoute>
                   }
                 />
