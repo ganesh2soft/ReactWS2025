@@ -9,6 +9,7 @@ export default function AdminProductsPage() {
   const [formData, setFormData] = useState({
     productId: "",
     productName: "",
+    brandName: "",
     category: "",
     price: "",
     discount: "",
@@ -99,6 +100,7 @@ export default function AdminProductsPage() {
     setFormData({
       productId: "",
       productName: "",
+      brandName: "",
       category: "",
       price: "",
       discount: "",
@@ -122,6 +124,16 @@ export default function AdminProductsPage() {
                 value={formData.productName}
                 onChange={handleChange}
                 placeholder="Product Name"
+                className="form-control"
+                required
+              />
+            </div>
+            <div className="col-md-3">
+              <input
+                name="brandName"
+                value={formData.brandName}
+                onChange={handleChange}
+                placeholder="Brand Name"
                 className="form-control"
                 required
               />

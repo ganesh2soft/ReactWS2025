@@ -9,6 +9,8 @@ const Logout = () => {
     localStorage.removeItem("token");
 
     localStorage.removeItem("userName");
+    localStorage.removeItem("username");
+    localStorage.clear();
 
     // 🧭 Redirect to login (or home)
     navigate("/login");
