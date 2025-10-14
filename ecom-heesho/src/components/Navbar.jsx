@@ -2,14 +2,20 @@ import React from "react";
 import { Container, Nav, Navbar, Form, FormControl } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png"; // Make sure you have a logo here
-
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 function AppNavbar() {
   const navigate = useNavigate();
   const userName = localStorage.getItem("userName");
+  const roles = localStorage.getItem("ROLES"); // get roles string
+  console.log("User roles from localStorage:", roles);
+
+  // Check if user is admin
+  const isAdmin = roles === "ROLE_ADMIN";
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userName");
+    localStorage.removeItem("ROLES");
     navigate("/login");
   };
   return (
@@ -78,15 +84,28 @@ function AppNavbar() {
             )}
           </Nav>
           <Nav>
-            <Nav.Link as={Link} to="/adminpanel">
-              Admin Panel
-            </Nav.Link>
-          </Nav>
-
-          <Nav>
-            <Nav.Link as={Link} to="/cart">
-              Cart
-            </Nav.Link>
+            {isAdmin ? (
+              <Nav.Link as={Link} to="/adminpanel">
+                Admin Panel
+              </Nav.Link>
+            ) : (
+              <OverlayTrigger
+                placement="bottom"
+                overlay={<Tooltip id="tooltip-disabled">Access Denied</Tooltip>}
+              >
+                <span
+                  style={{
+                    color: "#aaa",
+                    cursor: "not-allowed",
+                    userSelect: "none", // optional, to prevent text selection
+                    display: "inline-block",
+                  }}
+                  // Don't use pointerEvents:none here, so tooltip can trigger
+                >
+                  Admin Panel
+                </span>
+              </OverlayTrigger>
+            )}
           </Nav>
         </Navbar.Collapse>
       </Container>

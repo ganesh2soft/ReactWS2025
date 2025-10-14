@@ -12,7 +12,8 @@ export const authenticateSignInUser = (credentials, toast, reset, navigate, setL
     setAuthToken(token);
     localStorage.setItem("token", token); 
     localStorage.setItem("userName", JSON.stringify(userName));
-    console.log('inside authenticate user',userName,token)
+    localStorage.setItem("ROLES", user.roles); // Store roles in localStorage
+    console.log('inside authenticate user',userName,token,user.roles);
 
     // Dispatch user info to Redux
     dispatch({ type: 'LOGIN_SUCCESS', payload: user });

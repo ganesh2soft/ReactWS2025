@@ -28,7 +28,7 @@ html, body, #root, .app-wrapper {
 }
 
 .banner-image {
-  height:600px; /* or adjust to your desired banner height */
+  height:300px; /* or adjust to your desired banner height */
   object-fit: cover;
   object-position: center;
 }
