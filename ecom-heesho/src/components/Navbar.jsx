@@ -49,8 +49,8 @@ function AppNavbar() {
           </Nav>
 
           <Nav>
-            <Nav.Link as={Link} to="/offers">
-              Offers
+            <Nav.Link as={Link} to="/dashboard">
+              My Dashboard
             </Nav.Link>
           </Nav>
           {/* Search Bar */}
