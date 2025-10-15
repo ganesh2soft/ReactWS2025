@@ -1,66 +1,75 @@
-import React from "react";
+// src/components/admin/PaymentAdmin.jsx
 
-const PaymentsAdmin = () => {
-  const dummyPayments = [
-    {
-      id: 101,
-      email: "alice@example.com",
-      orderId: "ORD001",
-      method: "Credit Card",
-      amount: "$120.00",
-      status: "Completed",
-    },
-    {
-      id: 102,
-      email: "bob@example.com",
-      orderId: "ORD002",
-      method: "PayPal",
-      amount: "$80.00",
-      status: "Pending",
-    },
-    {
-      id: 103,
-      email: "charlie@example.com",
-      orderId: "ORD003",
-      method: "UPI",
-      amount: "$150.00",
-      status: "Failed",
-    },
-  ];
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+
+const PaymentAdmin = () => {
+  const [payments, setPayments] = useState([]);
+
+  useEffect(() => {
+    fetchPayments();
+  }, []);
+
+  const fetchPayments = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8082/api/payments/admin/all"
+      );
+      setPayments(response.data);
+    } catch (error) {
+      console.error("Error fetching payments:", error);
+    }
+  };
 
   return (
-    <section>
-      <h2>Payments Management</h2>
-      <table
-        border="1"
-        cellPadding="10"
-        style={{ marginTop: "1rem", width: "100%" }}
-      >
-        <thead>
-          <tr>
-            <th>Payment ID</th>
-            <th>Email</th>
-            <th>Order ID</th>
-            <th>Method</th>
-            <th>Amount</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {dummyPayments.map((payment) => (
-            <tr key={payment.id}>
-              <td>{payment.id}</td>
-              <td>{payment.email}</td>
-              <td>{payment.orderId}</td>
-              <td>{payment.method}</td>
-              <td>{payment.amount}</td>
-              <td>{payment.status}</td>
+    <div className="container mt-5">
+      <h2 className="mb-4 text-center">All Payment Records</h2>
+      <div className="table-responsive">
+        <table className="table table-bordered table-striped table-hover table-sm shadow">
+          <thead className="table-warning text-center">
+            <tr>
+              <th>Payment ID</th>
+              <th>Method</th>
+              <th>PG Payment ID</th>
+              <th>PG Name</th>
+              <th>Response Message</th>
+              <th>Status</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </section>
+          </thead>
+          <tbody className="text-center align-middle">
+            {payments.length > 0 ? (
+              payments.map((payment) => (
+                <tr key={payment.paymentId}>
+                  <td>{payment.paymentId}</td>
+                  <td>{payment.paymentMethod}</td>
+                  <td>{payment.pgPaymentId}</td>
+                  <td>{payment.pgName}</td>
+                  <td>{payment.pgResponseMessage}</td>
+                  <td>
+                    <span
+                      className={`badge ${
+                        payment.pgStatus === "Success"
+                          ? "bg-success"
+                          : "bg-danger"
+                      }`}
+                    >
+                      {payment.pgStatus}
+                    </span>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="6" className="text-center text-muted">
+                  No payments found.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 };
 
-export default PaymentsAdmin;
+export default PaymentAdmin;
