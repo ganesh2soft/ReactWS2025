@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "./ProductList.css"; // optional styling
+import { useNavigate } from "react-router-dom"; // 👈 important
+import "./ProductList.css";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -16,6 +18,24 @@ const ProductList = () => {
       });
   }, []);
 
+  const handleAddToCart = (product) => {
+    const user = localStorage.getItem("userName");
+    if (!user) {
+      // 👇 Save intent to redirect after login
+      localStorage.setItem("redirectAfterLogin", "/dashboard/mycart");
+      alert("Please log in to add items to your cart.");
+      navigate("/login");
+      return;
+    }
+
+    // ✅ Save to localStorage (or dispatch Redux action here)
+    const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
+    existingCart.push(product);
+    localStorage.setItem("cart", JSON.stringify(existingCart));
+
+    navigate("/dashboard/mycart");
+  };
+
   return (
     <div className="product-grid">
       {products.map((product) => (
@@ -25,7 +45,7 @@ const ProductList = () => {
           <h5>{product.category}</h5>
           <p>{product.description}</p>
           <h5>₹{product.price.toFixed(2)}</h5>
-          <button>Add to Cart</button>
+          <button onClick={() => handleAddToCart(product)}>Add to Cart</button>
         </div>
       ))}
     </div>

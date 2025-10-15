@@ -63,7 +63,7 @@ function AppNavbar() {
             />
           </Form>
           <Nav>
-            <Nav.Link as={Link} to="/ordersandreturns">
+            <Nav.Link as={Link} to="/dashboard">
               Orders & Returns
             </Nav.Link>
           </Nav>

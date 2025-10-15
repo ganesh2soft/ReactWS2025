@@ -1,7 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 
 const AdminPanel = () => {
   return (
@@ -12,6 +10,10 @@ const AdminPanel = () => {
         <ul style={{ listStyle: "none", padding: 0 }}>
           <li>
             <Link to="/adminpanel/productsadmin">Products Admin</Link>
+          </li>
+          <li>
+            <Link to="/adminpanel/cartadmin">Cart Admin</Link>{" "}
+            {/* Moved here */}
           </li>
           <li>
             <Link to="/adminpanel/ordersadmin">Orders Admin</Link>

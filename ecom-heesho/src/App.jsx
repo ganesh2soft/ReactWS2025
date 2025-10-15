@@ -22,7 +22,8 @@ import Logout from "./components/Logout";
 import MyCart from "./components/userFolder/MyCart";
 import MyOrders from "./components/userFolder/MyOrders";
 import MyProfile from "./components/userFolder/MyProfile";
-
+import NotFound from "./components/NotFound";
+import CartAdmin from "./components/adminFolder/CartAdmin";
 function App() {
   return (
     <>
@@ -63,10 +64,12 @@ function App() {
                     element={<h2>Welcome to the Admin Dashboard</h2>}
                   />
                   <Route path="productsadmin" element={<ProductsAdmin />} />
+                  <Route path="cartadmin" element={<CartAdmin />} />
                   <Route path="ordersadmin" element={<OrdersAdmin />} />
                   <Route path="paymentsadmin" element={<PaymentsAdmin />} />
                   <Route path="usersadmin" element={<UsersAdmin />} />
                 </Route>
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </div>
           </div>
