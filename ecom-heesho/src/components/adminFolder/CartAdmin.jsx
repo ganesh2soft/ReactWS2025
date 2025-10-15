@@ -23,6 +23,7 @@ const CartAdmin = () => {
 
       const res = await axios.get(`${API_BASE}/getcarts`, config);
       setCarts(res.data);
+      console.log("Fetched carts:", res.data);
     } catch (err) {
       console.error("Error fetching carts:", err);
     }

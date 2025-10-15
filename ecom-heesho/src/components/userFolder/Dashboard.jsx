@@ -44,6 +44,7 @@ const Dashboard = () => {
         <Route path="mycart" element={<MyCart />} />
         <Route path="myorders" element={<MyOrders />} />
         <Route path="myprofile" element={<MyProfile />} />
+
         <Route index element={<p>Please select a section.</p>} />
       </Routes>
     </div>
