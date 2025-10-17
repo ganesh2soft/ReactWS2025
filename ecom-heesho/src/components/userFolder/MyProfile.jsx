@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { toast } from "react-toastify";
-
+import { FaUserCircle } from "react-icons/fa";
 const MyProfile = () => {
   const [user, setUser] = useState(null);
   const [newAddress, setNewAddress] = useState("");
@@ -89,7 +89,10 @@ const MyProfile = () => {
 
   return (
     <div className="container mt-4">
-      <h3 className="mb-3 text-start fw-bold">My Profile</h3>
+      <h3 className="mb-3 text-start fw-bold border-bottom pb-2">
+        <FaUserCircle className="me-2 text-warning" />
+        My Profile
+      </h3>
 
       <div className="row">
         <div className="col-md-8">
