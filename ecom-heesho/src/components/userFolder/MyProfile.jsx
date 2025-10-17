@@ -89,71 +89,98 @@ const MyProfile = () => {
 
   return (
     <div className="container mt-4">
-      <h2>My Profile</h2>
-      <div className="card p-4 shadow-sm">
-        <p>
-          <strong>User ID:</strong> {user.userId}
-        </p>
-        <p>
-          <strong>Username:</strong> {user.userName}
-        </p>
-        <p>
-          <strong>Email:</strong> {user.email}
-        </p>
-        <p>
-          <strong>Role:</strong> {user.roles}
-        </p>
+      <h3 className="mb-3 text-start fw-bold">My Profile</h3>
 
-        {!editing ? (
-          <>
-            <p>
-              <strong>Address:</strong> {user.address || "Not Provided"}
-            </p>
-            <button
-              className="btn btn-primary me-2"
-              onClick={() => setEditing(true)}
-            >
-              Edit Address
-            </button>
-          </>
-        ) : (
-          <>
-            <div className="mb-3">
-              <label className="form-label">New Address</label>
-              <input
-                type="text"
-                className="form-control"
-                value={newAddress}
-                onChange={(e) => setNewAddress(e.target.value)}
-              />
+      <div className="row">
+        <div className="col-md-8">
+          <div
+            className="card p-4 shadow-sm bg-light"
+            style={{ maxWidth: "100%" }}
+          >
+            {/* Profile Info Rows */}
+            <div className="row mb-2">
+              <div className="col-sm-3 fw-bold">User ID:</div>
+              <div className="col-sm-9">{user.userId}</div>
             </div>
-            <button className="btn btn-success me-2" onClick={handleSave}>
-              Save
-            </button>
-            <button
-              className="btn btn-secondary"
-              onClick={() => setEditing(false)}
-            >
-              Cancel
-            </button>
-          </>
-        )}
+            <div className="row mb-2">
+              <div className="col-sm-3 fw-bold">Username:</div>
+              <div className="col-sm-9">{user.userName}</div>
+            </div>
+            <div className="row mb-2">
+              <div className="col-sm-3 fw-bold">Email:</div>
+              <div className="col-sm-9">{user.email}</div>
+            </div>
+            <div className="row mb-2">
+              <div className="col-sm-3 fw-bold">Role:</div>
+              <div className="col-sm-9">{user.roles}</div>
+            </div>
 
-        <hr />
+            {/* Address Section */}
+            {!editing ? (
+              <div className="row mb-2">
+                <label className="col-sm-4 fw-bold">Address:</label>
+                <div className="col-sm-8">
+                  {user.address || "Not Provided"}
+                  <br />
+                  <button
+                    className="btn btn-outline-primary btn-sm mt-2"
+                    onClick={() => setEditing(true)}
+                  >
+                    Edit Address
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="row mb-2">
+                <label className="col-sm-4 fw-bold">Edit Address:</label>
+                <div className="col-sm-8">
+                  <input
+                    type="text"
+                    className="form-control form-control-sm mb-2"
+                    value={newAddress}
+                    onChange={(e) => setNewAddress(e.target.value)}
+                  />
+                  <div className="d-flex gap-2">
+                    <button
+                      className="btn btn-success btn-sm"
+                      onClick={handleSave}
+                    >
+                      Save
+                    </button>
+                    <button
+                      className="btn btn-secondary btn-sm"
+                      onClick={() => setEditing(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
-        <div className="mb-3">
-          <label className="form-label">Reset Password</label>
-          <input
-            type="password"
-            className="form-control"
-            placeholder="Enter new password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-          />
+            <hr />
+
+            {/* Reset Password Section */}
+            <div className="row mb-2">
+              <label className="col-sm-4 fw-bold">Reset Password:</label>
+              <div className="col-sm-8">
+                <input
+                  type="password"
+                  className="form-control form-control-sm mb-2"
+                  placeholder="Enter new password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+                <button
+                  className="btn btn-danger btn-sm"
+                  onClick={handlePasswordReset}
+                >
+                  Reset Password
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-        <button className="btn btn-warning" onClick={handlePasswordReset}>
-          Reset Password
-        </button>
       </div>
     </div>
   );
