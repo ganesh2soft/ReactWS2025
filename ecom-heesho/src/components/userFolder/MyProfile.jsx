@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { toast } from "react-toastify";
 
 const MyProfile = () => {
   const [user, setUser] = useState(null);
@@ -13,7 +14,7 @@ const MyProfile = () => {
 
   useEffect(() => {
     if (!userId) {
-      alert("User ID not found in local storage. Please login again.");
+      alert("Session Cleared.No UserID found. Please login again.");
       return;
     }
 
@@ -70,7 +71,13 @@ const MyProfile = () => {
       .put(`http://localhost:8082/api/users/update/${userId}`, payload)
       .then(() => {
         setNewPassword("");
+
         alert("Password reset successfully!");
+
+        toast.info("Password reset successful, please login again.");
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = "/login";
       })
       .catch((error) => {
         console.error("Password reset failed:", error);
