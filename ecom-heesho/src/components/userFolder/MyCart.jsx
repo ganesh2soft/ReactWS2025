@@ -2,34 +2,63 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 const MyCart = () => {
-  const [cart, setCart] = useState(null);
+  const [cart, setCart] = useState({ products: [] }); // initialize with shape
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const token = localStorage.getItem("token");
+  const email = localStorage.getItem("email"); // parse if saved as JSON string
+
+  console.log("Email from localStorage:", email);
 
   useEffect(() => {
     const fetchCart = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:8082/api/carts/users/cart",
+          `http://localhost:8082/api/carts/userrelated/cart/${encodeURIComponent(
+            email
+          )}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
+        console.log("Fetched cart data:", res.data);
         setCart(res.data);
       } catch (err) {
         console.error("Failed to fetch cart", err);
+        setError(err);
+      } finally {
+        setLoading(false);
       }
     };
 
-    if (token) {
+    if (token && email) {
       fetchCart();
+    } else {
+      setLoading(false);
+      setError(new Error("User not logged in or email missing"));
     }
-  }, []);
+  }, [token, email]);
 
-  // ⛔️ While loading or no cart data
-  if (!cart || !Array.isArray(cart.cartItems)) {
-    return <div className="container mt-4">Loading cart...</div>;
+  if (loading) {
+    return <div className="container mt-4">Loading cart…</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="container mt-4">
+        <p>Failed to load cart: {error.message}</p>
+      </div>
+    );
+  }
+
+  // Use your returned shape: according to your logs you had { cartId: 902, totalPrice: 0, products: [...] }
+  const items = Array.isArray(cart.products) ? cart.products : [];
+
+  if (items.length === 0) {
+    return <div className="container mt-4">No items in your cart.</div>;
   }
 
   return (
@@ -44,7 +73,7 @@ const MyCart = () => {
           </tr>
         </thead>
         <tbody>
-          {cart.cartItems.map((item) => (
+          {items.map((item) => (
             <tr key={item.productId}>
               <td>{item.productName}</td>
               <td>{item.quantity}</td>
@@ -53,6 +82,13 @@ const MyCart = () => {
           ))}
         </tbody>
       </table>
+      <div className="mt-3">
+        <strong>Total: </strong> ₹
+        {(
+          cart.totalPrice ||
+          items.reduce((sum, it) => sum + it.price * it.quantity, 0)
+        ).toFixed(2)}
+      </div>
     </div>
   );
 };

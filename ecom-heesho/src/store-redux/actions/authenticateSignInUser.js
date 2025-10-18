@@ -8,6 +8,7 @@ export const authenticateSignInUser = (credentials, toast, reset, navigate, setL
   try {
     const { user, token } = await login(credentials);
     const userName = user.userName;
+    
     // Save token for future requests
     setAuthToken(token);
     localStorage.setItem("token", token); 
@@ -15,6 +16,9 @@ export const authenticateSignInUser = (credentials, toast, reset, navigate, setL
     localStorage.setItem("ROLES", user.roles); // Store roles in localStorage
     // Example after successful login and fetching user info
     localStorage.setItem('userId', user.userId); // ✅ Correct
+    console.log('Storing email in localStorage:', user.email);
+    localStorage.setItem("email", user.email);
+
 
 
     console.log('inside authenticate user',userName,user.userId,token,user.roles);
