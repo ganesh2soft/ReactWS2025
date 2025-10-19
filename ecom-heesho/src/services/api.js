@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { USER_API_BASE } from '../misc/constants';
+import { USER_API_BASE } from '../components/misc/constants';
+
 const API = axios.create({
   baseURL: USER_API_BASE, // use the constant here
   headers: {

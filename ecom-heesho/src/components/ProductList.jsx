@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./ProductList.css";
-import { CART_API_BASE, PRODUCT_API_BASE } from "../misc/constants";
+
+import { CART_API_BASE, PRODUCT_API_BASE } from "../components/misc/constants";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
