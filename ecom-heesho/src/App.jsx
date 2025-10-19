@@ -24,7 +24,7 @@ import MyOrders from "./components/userFolder/MyOrders";
 import MyProfile from "./components/userFolder/MyProfile";
 import NotFound from "./components/NotFound";
 import CartAdmin from "./components/adminFolder/CartAdmin";
-import Payment from "./components/userFolder/Payment";
+
 function App() {
   return (
     <>
@@ -50,7 +50,6 @@ function App() {
                 <Route path="/logout" element={<Logout />} />
                 <Route path="/login" element={<LogIn />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/payment" element={<Payment />} />
 
                 <Route
                   path="/dashboard/*"

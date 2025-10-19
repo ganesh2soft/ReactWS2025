@@ -3,7 +3,7 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import MyCart from "./MyCart";
 import MyOrders from "./MyOrders";
 import MyProfile from "./MyProfile";
-
+import PaymentPage from "./PaymentPage";
 const Dashboard = () => {
   const userName = localStorage.getItem("userName");
   const navigate = useNavigate();
@@ -44,7 +44,7 @@ const Dashboard = () => {
         <Route path="mycart" element={<MyCart />} />
         <Route path="myorders" element={<MyOrders />} />
         <Route path="myprofile" element={<MyProfile />} />
-
+        <Route path="paymentpage" element={<PaymentPage />} />
         <Route index element={<p>Please select a section.</p>} />
       </Routes>
     </div>

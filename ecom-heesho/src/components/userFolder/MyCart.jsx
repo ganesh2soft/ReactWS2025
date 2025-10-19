@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useNavigate } from "react-router-dom";
 import { CART_API_BASE } from "../misc/constants";
+
 const MyCart = () => {
   const [cart, setCart] = useState({ products: [] });
   const [loading, setLoading] = useState(true);
@@ -11,6 +13,7 @@ const MyCart = () => {
 
   const token = localStorage.getItem("token");
   const email = localStorage.getItem("email");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -87,6 +90,16 @@ const MyCart = () => {
     return sum;
   }, 0);
 
+  // Prepare selected products info for payment page
+  const selectedOrderItems = items
+    .filter((item) => selectedProducts[item.productId])
+    .map((item) => ({
+      productId: item.productId,
+      productName: item.productName,
+      quantity: quantities[item.productId] || item.quantity,
+      price: item.price,
+    }));
+
   return (
     <div className="container mt-4">
       <h3>🛒 My Cart</h3>
@@ -152,11 +165,15 @@ const MyCart = () => {
           className="btn btn-success"
           disabled={selectedTotal === 0}
           onClick={() => {
-            // placeholder: next step could go to payment or order confirmation
-            alert("Proceeding to next step (Order or Payment)");
+            navigate("/dashboard/paymentpage", {
+              state: {
+                orderItems: selectedOrderItems,
+                total: selectedTotal.toFixed(2),
+              },
+            });
           }}
         >
-          {selectedTotal > 0 ? "Order Now" : "Select Products to Continue"}
+          {selectedTotal > 0 ? "Pay Now" : "Select Products to Continue"}
         </button>
       </div>
     </div>
