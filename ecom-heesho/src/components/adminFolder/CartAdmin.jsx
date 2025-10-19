@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
-
-const API_BASE = "http://localhost:8082/api/carts"; // Change if needed
+import { CART_API_BASE } from "../misc/constants";
 
 const CartAdmin = () => {
   const [carts, setCarts] = useState([]);
@@ -21,7 +20,7 @@ const CartAdmin = () => {
         },
       };
 
-      const res = await axios.get(`${API_BASE}/getcarts`, config);
+      const res = await axios.get(`${CART_API_BASE}/getcarts`, config);
       setCarts(res.data);
       console.log("Fetched carts:", res.data);
     } catch (err) {
@@ -40,7 +39,7 @@ const CartAdmin = () => {
           },
         };
 
-        await axios.delete(`${API_BASE}/${cartId}`, config);
+        await axios.delete(`${CART_API_BASE}/${cartId}`, config);
         fetchCarts(); // refresh list after deletion
       } catch (err) {
         console.error("Error deleting cart:", err);

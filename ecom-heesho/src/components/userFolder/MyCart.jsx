@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+import { CART_API_BASE } from "../misc/constants";
 const MyCart = () => {
   const [cart, setCart] = useState({ products: [] });
   const [loading, setLoading] = useState(true);
@@ -16,9 +16,7 @@ const MyCart = () => {
     const fetchCart = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:8082/api/carts/userrelated/cart/${encodeURIComponent(
-            email
-          )}`,
+          `${CART_API_BASE}/userrelated/cart/${encodeURIComponent(email)}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

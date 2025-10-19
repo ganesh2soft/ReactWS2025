@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
-
-const API_BASE = "http://localhost:8082/api/users"; // Change if needed
+import { USER_API_BASE } from "../misc/constants";
 
 const UsersAdmin = () => {
   const [users, setUsers] = useState([]);
@@ -14,7 +13,7 @@ const UsersAdmin = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get(`${API_BASE}/get/all`);
+      const res = await axios.get(`${USER_API_BASE}/get/all`);
       console.log(res.data);
       setUsers(res.data);
     } catch (err) {
@@ -34,7 +33,7 @@ const UsersAdmin = () => {
           },
         };
 
-        await axios.delete(`${API_BASE}/delete/${userId}`, config);
+        await axios.delete(`${USER_API_BASE}/delete/${userId}`, config);
         fetchUsers(); // refresh list
       } catch (err) {
         console.error("Error deleting user:", err);

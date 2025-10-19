@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Modal, Button, Form } from "react-bootstrap";
-
+import { ORDER_API_BASE } from "../misc/constants";
 const OrdersAdmin = () => {
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -16,9 +16,7 @@ const OrdersAdmin = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:8082/api/orders/admin/getallorders"
-      );
+      const response = await axios.get(`${ORDER_API_BASE}/admin/getallorders`);
       setOrders(response.data);
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -44,7 +42,7 @@ const OrdersAdmin = () => {
     try {
       const updatedOrder = { ...selectedOrder, orderStatus: status };
       await axios.put(
-        `http://localhost:8082/api/orders/admin/update/${selectedOrder.orderId}`,
+        `${ORDER_API_BASE}/admin/update/${selectedOrder.orderId}`,
         updatedOrder
       );
       fetchOrders();

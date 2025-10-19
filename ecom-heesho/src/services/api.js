@@ -1,7 +1,7 @@
 import axios from 'axios';
-
+import { USER_API_BASE } from '../misc/constants';
 const API = axios.create({
-  baseURL: 'http://localhost:8082/api/users',
+  baseURL: USER_API_BASE, // use the constant here
   headers: {
     'Content-Type': 'application/json',
   },

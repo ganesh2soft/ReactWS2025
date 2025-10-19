@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
+import { PAYMENT_API_BASE } from "../misc/constants";
 const PaymentAdmin = () => {
   const [payments, setPayments] = useState([]);
 
@@ -12,9 +12,7 @@ const PaymentAdmin = () => {
 
   const fetchPayments = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:8082/api/payments/admin/all"
-      );
+      const response = await axios.get(`${PAYMENT_API_BASE}/admin/all`);
       setPayments(response.data);
     } catch (error) {
       console.error("Error fetching payments:", error);

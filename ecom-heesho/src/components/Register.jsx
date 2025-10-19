@@ -3,7 +3,7 @@ import { Form, Button, Container, Card } from "react-bootstrap";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import { USER_API_BASE } from "./misc/constants";
 const Register = () => {
   const navigate = useNavigate();
 
@@ -24,7 +24,7 @@ const Register = () => {
         return;
       }
 
-      const res = await axios.post("http://localhost:8082/api/users/add", {
+      const res = await axios.post(`${USER_API_BASE}/add`, {
         userName: data.userName,
         email: data.email,
         password: data.password,

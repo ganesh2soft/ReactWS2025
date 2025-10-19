@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./ProductList.css";
+import { CART_API_BASE, PRODUCT_API_BASE } from "../misc/constants";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -11,7 +12,7 @@ const ProductList = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8082/api/products/getall")
+      .get(`${PRODUCT_API_BASE}/getall`)
       .then((res) => {
         setProducts(res.data);
         console.log("Products data:", res.data);
@@ -33,7 +34,7 @@ const ProductList = () => {
 
     try {
       await axios.post(
-        "http://localhost:8082/api/carts/addToCart",
+        `${CART_API_BASE}/addToCart`,
         {
           productId: product.productId,
           quantity: 1,

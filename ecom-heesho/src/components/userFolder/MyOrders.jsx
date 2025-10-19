@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Modal, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+import { ORDER_API_BASE } from "../misc/constants";
 const MyOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,7 +13,7 @@ const MyOrders = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8082/api/orders/userrelated/${userId}`)
+      .get(`${ORDER_API_BASE}/userrelated/${userId}`)
       .then((res) => {
         setOrders(res.data);
         setLoading(false);

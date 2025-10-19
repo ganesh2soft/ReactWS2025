@@ -3,6 +3,7 @@ import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { toast } from "react-toastify";
 import { FaUserCircle } from "react-icons/fa";
+import { USER_API_BASE } from "../misc/constants";
 const MyProfile = () => {
   const [user, setUser] = useState(null);
   const [newAddress, setNewAddress] = useState("");
@@ -19,7 +20,7 @@ const MyProfile = () => {
     }
 
     axios
-      .get(`http://localhost:8082/api/users/get/${userId}`)
+      .get(`${USER_API_BASE}/get/${userId}`)
       .then((response) => {
         setUser(response.data);
         setNewAddress(response.data.address || "");
@@ -39,7 +40,7 @@ const MyProfile = () => {
     };
 
     axios
-      .put(`http://localhost:8082/api/users/update/${userId}`, updatedUser)
+      .put(`${USER_API_BASE}/update/${userId}`, updatedUser)
       .then((response) => {
         setUser(response.data);
         setEditing(false);

@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
-
-const API_BASE = "http://localhost:8082/api/products";
+import { PRODUCT_API_BASE } from "../misc/constants";
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState([]);
@@ -25,7 +24,7 @@ export default function AdminProductsPage() {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get(`${API_BASE}/getall`);
+      const res = await axios.get(`${PRODUCT_API_BASE}/getall`);
       setProducts(res.data);
     } catch (err) {
       console.error("Error fetching products:", err);
@@ -54,12 +53,12 @@ export default function AdminProductsPage() {
       if (isEditing) {
         console.log("Inside Product editing");
         await axios.put(
-          `${API_BASE}/updateproducts/${formData.productId}`,
+          `${PRODUCT_API_BASE}/updateproducts/${formData.productId}`,
           formData,
           config
         );
       } else {
-        await axios.post(`${API_BASE}/addproducts`, formData, config);
+        await axios.post(`${PRODUCT_API_BASE}/addproducts`, formData, config);
       }
 
       fetchProducts();
@@ -87,7 +86,10 @@ export default function AdminProductsPage() {
       };
       const productId = id; // Assuming 'id' is the correct identifier
       try {
-        await axios.delete(`${API_BASE}/deleteproducts/${productId}`, config);
+        await axios.delete(
+          `${PRODUCT_API_BASE}/deleteproducts/${productId}`,
+          config
+        );
         fetchProducts();
       } catch (err) {
         console.error("Error deleting product:", err);

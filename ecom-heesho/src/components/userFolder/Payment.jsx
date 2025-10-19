@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import { CART_API_BASE } from "../misc/constants";
+import { ORDER_API_BASE } from "../misc/constants";
 const Payment = () => {
   const navigate = useNavigate();
   const [cart, setCart] = useState(null);
@@ -17,14 +18,11 @@ const Payment = () => {
 
   const fetchCart = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:8082/api/carts/users/cart",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await axios.get(`${CART_API_BASE}/users/cart`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setCart(res.data);
     } catch (err) {
       console.error("Failed to load cart", err);
@@ -45,7 +43,7 @@ const Payment = () => {
     try {
       // 1. Place the order
       await axios.post(
-        `http://localhost:8082/api/orders/order/users/payments/${paymentMethod}`,
+        `${ORDER_API_BASE}/order/users/payments/${paymentMethod}`,
         orderPayload,
         {
           headers: {
