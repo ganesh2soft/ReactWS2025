@@ -12,31 +12,31 @@ const PaymentPage = () => {
   const { orderItems = [], total = 0 } = state || {};
 
   const handlePayment = async (success = true) => {
-    if (success) {
-      try {
-        // Simulate payment success
-        for (const item of orderItems) {
-          await axios.delete(
-            `${CART_API_BASE}/userrelated/cart/${encodeURIComponent(email)}/${
-              item.productId
-            }`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-        }
-        alert("✅ Payment successful! Items removed from cart.");
-        navigate("/cart"); // or /orders, etc.
-      } catch (err) {
-        console.error("Error removing items after payment", err);
-        alert("Payment succeeded but failed to update cart.");
-      }
-    } else {
-      // Payment failed
+    if (!success) {
       alert("❌ Payment failed. Your cart items are retained.");
-      navigate("/cart");
+      navigate("/dashboard/mycart");
+      return;
+    }
+    try {
+      const productIds = orderItems.map((item) => item.productId);
+      await axios.delete(
+        `${CART_API_BASE}/userrelated/cart/${encodeURIComponent(
+          email
+        )}/products`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          data: productIds,
+        }
+      );
+      alert("✅ Payment successful! Items removed from cart.");
+      navigate("/dashboard/myorders"); // or wherever you want after payment
+    } catch (err) {
+      console.error("Error removing items after payment", err);
+      alert("Payment succeeded but failed to update cart.");
+      navigate("/dashboard/myorders");
     }
   };
 
