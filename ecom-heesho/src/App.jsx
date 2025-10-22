@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/navbar";
 import "./App.css";
 import Home from "./components/Home";
 import Footer from "./components/Footer";
@@ -10,18 +10,14 @@ import OrdersAdmin from "./components/adminFolder/OrdersAdmin";
 import PaymentsAdmin from "./components/adminFolder/PaymentsAdmin";
 import UsersAdmin from "./components/adminFolder/UsersAdmin";
 import Offers from "./components/misc/Offers";
-
 import LogIn from "./components/LogIn";
 import Register from "./components/Register";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./components/userFolder/Dashboard";
 import AdminPanel from "./components/adminFolder/AdminPanel";
 import Logout from "./components/Logout";
-import MyCart from "./components/userFolder/MyCart";
-import MyOrders from "./components/userFolder/MyOrders";
-import MyProfile from "./components/userFolder/MyProfile";
 import NotFound from "./components/NotFound";
 import CartAdmin from "./components/adminFolder/CartAdmin";
 

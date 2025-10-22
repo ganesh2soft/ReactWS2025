@@ -70,7 +70,8 @@ const Register = () => {
               {...register("email", {
                 required: "*Email is required",
                 pattern: {
-                  value: /^\S+@\S+$/i,
+                  // NOSONAR
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                   message: "*Invalid email format",
                 },
               })}
