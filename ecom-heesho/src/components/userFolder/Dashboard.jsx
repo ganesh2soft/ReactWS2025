@@ -4,15 +4,30 @@ import MyCart from "./MyCart";
 import MyOrders from "./MyOrders";
 import MyProfile from "./MyProfile";
 import PaymentPage from "./PaymentPage";
+import { Button } from "react-bootstrap";
+
 const Dashboard = () => {
   const userName = localStorage.getItem("userName");
   const navigate = useNavigate();
 
   return (
-    <div>
-      <h2>Welcome to Your Dashboard</h2>
+    <div className="mt-4 container">
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h2 className="fw-bold text-primary mb-0">Welcome to Your Dashboard</h2>
+
+        {/* 🌟 Decorative Right-Aligned Button */}
+        <Button
+          variant="outline-success"
+          size="lg"
+          className="fw-semibold shadow-sm"
+          onClick={() => navigate("/")}
+        >
+          🛍️ Shop More
+        </Button>
+      </div>
+
       {userName && (
-        <p>
+        <p className="text-muted">
           👋 Logged in as: <strong>{userName}</strong>
         </p>
       )}
