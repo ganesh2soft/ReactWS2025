@@ -13,7 +13,7 @@ const CategoryNavbar = () => {
     { name: "All", key: "all" },
     { name: "Electronics", key: "electronics" },
     { name: "Toys", key: "toys" },
-    { name: "Clothes", key: "clothes" },
+    { name: "Fashion", key: "fashion" },
     { name: "Kitchen & Dining", key: "kitchen" },
     { name: "Beauty & Health", key: "beauty-health" },
   ];
