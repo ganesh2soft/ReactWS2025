@@ -20,6 +20,7 @@ import AdminPanel from "./components/adminFolder/AdminPanel";
 import Logout from "./components/Logout";
 import NotFound from "./components/NotFound";
 import CartAdmin from "./components/adminFolder/CartAdmin";
+import ProductList from "./components/ProductList";
 
 function App() {
   return (
@@ -31,22 +32,22 @@ function App() {
         newestOnTop
         closeOnClick
         pauseOnHover
-        theme="colored" // Looks good with Bootstrap
+        theme="colored"
       />
       <Router>
         <div className="app-wrapper">
           <Navbar />
-          <CategoryNavbar />
+          <CategoryNavbar /> {/* Only once */}
           <div className="app-body" style={{ display: "flex" }}>
             <Sidebar />
             <div className="app-content">
               <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/products" element={<ProductList />} />
                 <Route path="/offers" element={<Offers />} />
                 <Route path="/logout" element={<Logout />} />
                 <Route path="/login" element={<LogIn />} />
                 <Route path="/register" element={<Register />} />
-
                 <Route
                   path="/dashboard/*"
                   element={
@@ -78,28 +79,3 @@ function App() {
 }
 
 export default App;
-{
-  /*
-       
-       
-        
-          <Route path='/' element={<PrivateRoute />}>
-            <Route path='/checkout' element={ <Checkout />}/>
-            <Route path='/order-confirm' element={ <PaymentConfirmation />}/>
-          </Route>
-
-          <Route path='/' element={<PrivateRoute publicPage />}>
-            <Route path='/login' element={ <LogIn />}/>
-            <Route path='/register' element={ <Register />}/>
-          </Route>
-
-           <Route path='/' element={<PrivateRoute adminOnly />}>
-            <Route path='/admin' element={ <AdminLayout />}>
-              <Route path='' element={<Dashboard />} />
-              <Route path='products' element={<AdminProducts />} />
-              <Route path='sellers' element={<Sellers />} />
-              <Route path='orders' element={<Orders />} />
-              <Route path='categories' element={<Category />} />
-            </Route>
-          </Route>*/
-}
