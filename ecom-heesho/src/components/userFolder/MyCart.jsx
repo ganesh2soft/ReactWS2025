@@ -29,7 +29,8 @@ const MyCart = () => {
           productName: item.product.productName,
           price: item.product.specialPrice,
           discount: item.product.discount || 0,
-          quantity: item.placedQty,
+          quantity: item.placedQty, // quantity in cart
+          maxQty: item.product.quantity, // stock available
         }));
 
         setCart({ products: cartItems });
@@ -77,10 +78,11 @@ const MyCart = () => {
     }));
   };
 
-  // Update quantity
-  const updateQuantity = (productId, delta) => {
+  // Update quantity with maxQty enforcement
+  const updateQuantity = (productId, delta, maxQty) => {
     setQuantities((prev) => {
-      const newQty = Math.max(1, (prev[productId] || 1) + delta);
+      const currentQty = prev[productId] || 1;
+      const newQty = Math.min(Math.max(1, currentQty + delta), maxQty);
       return { ...prev, [productId]: newQty };
     });
   };
@@ -136,7 +138,9 @@ const MyCart = () => {
                   <div className="btn-group" role="group">
                     <button
                       className="btn btn-sm btn-outline-danger rounded-start"
-                      onClick={() => updateQuantity(item.productId, -1)}
+                      onClick={() =>
+                        updateQuantity(item.productId, -1, item.maxQty)
+                      }
                     >
                       -
                     </button>
@@ -145,11 +149,19 @@ const MyCart = () => {
                     </button>
                     <button
                       className="btn btn-sm btn-outline-success rounded-end"
-                      onClick={() => updateQuantity(item.productId, 1)}
+                      onClick={() =>
+                        updateQuantity(item.productId, 1, item.maxQty)
+                      }
+                      disabled={qty >= item.maxQty} // disable if max reached
                     >
                       +
                     </button>
                   </div>
+                  {qty >= item.maxQty && (
+                    <small className="text-danger d-block">
+                      Max available reached
+                    </small>
+                  )}
                 </td>
                 <td>
                   ₹
