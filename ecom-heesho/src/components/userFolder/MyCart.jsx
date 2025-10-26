@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { CART_API_BASE } from "../misc/constants";
 
 const MyCart = () => {
-  const [cart, setCart] = useState({ products: [] });
+  const [cart, setCart] = useState({ products: [] }); // products = mapped CartItemDTO
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedProducts, setSelectedProducts] = useState({}); // productId -> boolean
@@ -20,18 +20,24 @@ const MyCart = () => {
       try {
         const res = await axios.get(
           `${CART_API_BASE}/userrelated/cart/${encodeURIComponent(email)}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
-        setCart(res.data);
 
-        // Initialize quantities and selection state
+        // Map CartItemDTO to frontend-friendly format
+        const cartItems = res.data.cartItemDTO.map((item) => ({
+          productId: item.product.productId,
+          productName: item.product.productName,
+          price: item.product.specialPrice,
+          discount: item.product.discount || 0,
+          quantity: item.placedQty,
+        }));
+
+        setCart({ products: cartItems });
+
+        // Initialize quantities and selection
         const initialQuantities = {};
         const initialSelection = {};
-        res.data.products.forEach((item) => {
+        cartItems.forEach((item) => {
           initialQuantities[item.productId] = item.quantity;
           initialSelection[item.productId] = false;
         });
@@ -60,12 +66,10 @@ const MyCart = () => {
     );
 
   const items = Array.isArray(cart.products) ? cart.products : [];
-
-  if (items.length === 0) {
+  if (items.length === 0)
     return <div className="container mt-4">No items in your cart.</div>;
-  }
 
-  // Handle checkbox toggle
+  // Toggle selection
   const toggleSelect = (productId) => {
     setSelectedProducts((prev) => ({
       ...prev,
@@ -73,7 +77,7 @@ const MyCart = () => {
     }));
   };
 
-  // Handle quantity update
+  // Update quantity
   const updateQuantity = (productId, delta) => {
     setQuantities((prev) => {
       const newQty = Math.max(1, (prev[productId] || 1) + delta);
@@ -81,23 +85,26 @@ const MyCart = () => {
     });
   };
 
-  // Compute total of selected items
+  // Compute price after discount
+  const priceAfterDiscount = (price, discount) => price * (1 - discount / 100);
+
+  // Compute total for selected items
   const selectedTotal = items.reduce((sum, item) => {
     if (selectedProducts[item.productId]) {
       const qty = quantities[item.productId] || item.quantity;
-      return sum + item.price * qty;
+      return sum + priceAfterDiscount(item.price, item.discount) * qty;
     }
     return sum;
   }, 0);
 
-  // Prepare selected products info for payment page
+  // Prepare order items for payment
   const selectedOrderItems = items
     .filter((item) => selectedProducts[item.productId])
     .map((item) => ({
       productId: item.productId,
       productName: item.productName,
       quantity: quantities[item.productId] || item.quantity,
-      price: item.price,
+      price: priceAfterDiscount(item.price, item.discount),
     }));
 
   return (
@@ -126,17 +133,12 @@ const MyCart = () => {
                 </td>
                 <td>{item.productName}</td>
                 <td>
-                  <div
-                    className="btn-group"
-                    role="group"
-                    aria-label="Quantity control"
-                  >
+                  <div className="btn-group" role="group">
                     <button
                       className="btn btn-sm btn-outline-danger rounded-start"
                       onClick={() => updateQuantity(item.productId, -1)}
-                      title="Decrease quantity"
                     >
-                      <i className="bi bi-dash"></i>
+                      -
                     </button>
                     <button className="btn btn-sm btn-light px-3" disabled>
                       {qty}
@@ -144,13 +146,17 @@ const MyCart = () => {
                     <button
                       className="btn btn-sm btn-outline-success rounded-end"
                       onClick={() => updateQuantity(item.productId, 1)}
-                      title="Increase quantity"
                     >
-                      <i className="bi bi-plus"></i>
+                      +
                     </button>
                   </div>
                 </td>
-                <td>₹{(item.price * qty).toFixed(2)}</td>
+                <td>
+                  ₹
+                  {(
+                    priceAfterDiscount(item.price, item.discount) * qty
+                  ).toFixed(2)}
+                </td>
               </tr>
             );
           })}
