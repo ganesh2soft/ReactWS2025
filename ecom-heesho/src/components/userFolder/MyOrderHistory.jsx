@@ -120,9 +120,27 @@ const MyOrderHistory = () => {
                   <tbody>
                     {selectedOrder.orderItems?.map((item, idx) => (
                       <tr key={idx}>
-                        <td>{item.productName || item.product?.productName}</td>
-                        <td>{item.quantity}</td>
-                        <td>₹{item.price || item.product?.price}</td>
+                        <td>
+                          <div className="d-flex align-items-center">
+                            <img
+                              src={item.productDTO?.imageURL}
+                              alt={item.productDTO?.productName}
+                              style={{
+                                width: "50px",
+                                height: "50px",
+                                marginRight: "10px",
+                                objectFit: "cover",
+                              }}
+                            />
+                            <div>
+                              <strong>{item.productDTO?.productName}</strong>
+                              <br />
+                              <small>{item.productDTO?.brandName}</small>
+                            </div>
+                          </div>
+                        </td>
+                        <td>{item.placedQty}</td>
+                        <td>₹{item.orderedProductPrice.toFixed(2)}</td>
                       </tr>
                     ))}
                   </tbody>
