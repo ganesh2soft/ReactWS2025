@@ -5,53 +5,51 @@ import { useNavigate } from "react-router-dom";
 import { CART_API_BASE } from "../misc/constants";
 
 const MyCart = () => {
-  const [cart, setCart] = useState({ products: [] }); // products = mapped CartItemDTO
+  const [cart, setCart] = useState({ products: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedProducts, setSelectedProducts] = useState({}); // productId -> boolean
-  const [quantities, setQuantities] = useState({}); // productId -> quantity
+  const [selectedProducts, setSelectedProducts] = useState({});
+  const [quantities, setQuantities] = useState({});
+  const [message, setMessage] = useState(""); // ✅ feedback message
 
   const token = localStorage.getItem("token");
   const email = localStorage.getItem("email");
   const navigate = useNavigate();
 
+  const fetchCart = async () => {
+    try {
+      const res = await axios.get(
+        `${CART_API_BASE}/userrelated/cart/${encodeURIComponent(email)}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const cartItems = res.data.cartItemDTO.map((item) => ({
+        productId: item.product.productId,
+        productName: item.product.productName,
+        price: item.product.specialPrice,
+        discount: item.product.discount || 0,
+        quantity: item.placedQty,
+        maxQty: item.product.quantity,
+      }));
+
+      setCart({ products: cartItems });
+
+      const initialQuantities = {};
+      const initialSelection = {};
+      cartItems.forEach((item) => {
+        initialQuantities[item.productId] = item.quantity;
+        initialSelection[item.productId] = false;
+      });
+      setQuantities(initialQuantities);
+      setSelectedProducts(initialSelection);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchCart = async () => {
-      try {
-        const res = await axios.get(
-          `${CART_API_BASE}/userrelated/cart/${encodeURIComponent(email)}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-
-        // Map CartItemDTO to frontend-friendly format
-        const cartItems = res.data.cartItemDTO.map((item) => ({
-          productId: item.product.productId,
-          productName: item.product.productName,
-          price: item.product.specialPrice,
-          discount: item.product.discount || 0,
-          quantity: item.placedQty, // quantity in cart
-          maxQty: item.product.quantity, // stock available
-        }));
-
-        setCart({ products: cartItems });
-
-        // Initialize quantities and selection
-        const initialQuantities = {};
-        const initialSelection = {};
-        cartItems.forEach((item) => {
-          initialQuantities[item.productId] = item.quantity;
-          initialSelection[item.productId] = false;
-        });
-
-        setQuantities(initialQuantities);
-        setSelectedProducts(initialSelection);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     if (token && email) {
       fetchCart();
     } else {
@@ -99,7 +97,7 @@ const MyCart = () => {
     return sum;
   }, 0);
 
-  // Prepare order items for payment
+  // Prepare selected order items
   const selectedOrderItems = items
     .filter((item) => selectedProducts[item.productId])
     .map((item) => ({
@@ -109,9 +107,43 @@ const MyCart = () => {
       price: priceAfterDiscount(item.price, item.discount),
     }));
 
+  // ✅ Delete selected items from cart
+  const handleRemoveSelected = async () => {
+    const selectedIds = Object.keys(selectedProducts)
+      .filter((id) => selectedProducts[id])
+      .map((id) => parseInt(id));
+
+    if (selectedIds.length === 0) {
+      alert("Please select at least one product to remove.");
+      return;
+    }
+
+    try {
+      await axios.delete(
+        `${CART_API_BASE}/userrelated/cart/${encodeURIComponent(
+          email
+        )}/products`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          data: selectedIds, // DELETE request body
+        }
+      );
+      setMessage("Selected products removed successfully.");
+      await fetchCart(); // Refresh cart after deletion
+    } catch (err) {
+      console.error("Failed to remove products:", err);
+      setMessage("Failed to remove selected products.");
+    }
+  };
+
   return (
     <div className="container mt-4">
       <h3>🛒 My Cart</h3>
+      {message && (
+        <div className="alert alert-info py-2" role="alert">
+          {message}
+        </div>
+      )}
       <table className="table table-bordered align-middle">
         <thead className="table-danger">
           <tr>
@@ -152,7 +184,7 @@ const MyCart = () => {
                       onClick={() =>
                         updateQuantity(item.productId, 1, item.maxQty)
                       }
-                      disabled={qty >= item.maxQty} // disable if max reached
+                      disabled={qty >= item.maxQty}
                     >
                       +
                     </button>
@@ -176,23 +208,37 @@ const MyCart = () => {
       </table>
 
       <div className="d-flex justify-content-between align-items-center mt-4">
-        <h5>
-          Selected Total: <strong>₹{selectedTotal.toFixed(2)}</strong>
-        </h5>
-        <button
-          className="btn btn-success"
-          disabled={selectedTotal === 0}
-          onClick={() => {
-            navigate("/dashboard/paymentpage", {
-              state: {
-                orderItems: selectedOrderItems,
-                total: selectedTotal.toFixed(2),
-              },
-            });
-          }}
-        >
-          {selectedTotal > 0 ? "Pay Now" : "Select Products to Continue"}
-        </button>
+        <div>
+          <button
+            className="btn btn-outline-danger me-3"
+            disabled={
+              Object.values(selectedProducts).filter((v) => v).length === 0
+            }
+            onClick={handleRemoveSelected}
+          >
+            🗑️ Remove Selected
+          </button>
+        </div>
+
+        <div className="d-flex align-items-center">
+          <h5 className="me-4 mb-0">
+            Selected Total: <strong>₹{selectedTotal.toFixed(2)}</strong>
+          </h5>
+          <button
+            className="btn btn-success"
+            disabled={selectedTotal === 0}
+            onClick={() => {
+              navigate("/dashboard/paymentpage", {
+                state: {
+                  orderItems: selectedOrderItems,
+                  total: selectedTotal.toFixed(2),
+                },
+              });
+            }}
+          >
+            {selectedTotal > 0 ? "Pay Now" : "Select Products to Continue"}
+          </button>
+        </div>
       </div>
     </div>
   );
