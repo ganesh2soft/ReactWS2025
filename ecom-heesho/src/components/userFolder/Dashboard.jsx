@@ -1,10 +1,11 @@
 import React from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import MyCart from "./MyCart";
-import MyOrders from "./MyOrders";
+import MyOrderHistory from "./MyOrderHistory";
 import MyProfile from "./MyProfile";
 import PaymentPage from "./PaymentPage";
 import { Button } from "react-bootstrap";
+import OrderingPage from "./OrderingPage";
 
 const Dashboard = () => {
   const userName = localStorage.getItem("userName");
@@ -41,9 +42,9 @@ const Dashboard = () => {
         </button>
         <button
           className="btn btn-success me-2"
-          onClick={() => navigate("/dashboard/myorders")}
+          onClick={() => navigate("/dashboard/myorderhistory")}
         >
-          My Orders
+          My Orders History
         </button>
         <button
           className="btn btn-info text-white"
@@ -57,10 +58,11 @@ const Dashboard = () => {
 
       <Routes>
         <Route path="mycart" element={<MyCart />} />
-        <Route path="myorders" element={<MyOrders />} />
+        <Route path="myorderhistory" element={<MyOrderHistory />} />
         <Route path="myprofile" element={<MyProfile />} />
         <Route path="paymentpage" element={<PaymentPage />} />
         <Route index element={<p>Please select a section.</p>} />
+        <Route path="orderingpage" element={<OrderingPage />} />
       </Routes>
     </div>
   );

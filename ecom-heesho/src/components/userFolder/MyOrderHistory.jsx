@@ -3,7 +3,7 @@ import axios from "axios";
 import { Modal, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { ORDER_API_BASE } from "../misc/constants";
-const MyOrders = () => {
+const MyOrderHistory = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -165,4 +165,4 @@ const MyOrders = () => {
   );
 };
 
-export default MyOrders;
+export default MyOrderHistory;

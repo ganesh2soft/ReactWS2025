@@ -228,7 +228,7 @@ const MyCart = () => {
             className="btn btn-success"
             disabled={selectedTotal === 0}
             onClick={() => {
-              navigate("/dashboard/paymentpage", {
+              navigate("/dashboard/orderingpage", {
                 state: {
                   orderItems: selectedOrderItems,
                   total: selectedTotal.toFixed(2),
@@ -236,7 +236,7 @@ const MyCart = () => {
               });
             }}
           >
-            {selectedTotal > 0 ? "Pay Now" : "Select Products to Continue"}
+            {selectedTotal > 0 ? "Order Now" : "Select Products to Continue"}
           </button>
         </div>
       </div>
