@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button, Table, Form } from "react-bootstrap";
-
+import axios from "axios";
+import { ORDER_API_BASE } from "../misc/constants";
 const OrderingPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Get selected order items and total from state passed via navigate
+  // Get selected items and total passed from cart
   const { orderItems = [], total = 0 } = location.state || {};
 
   const [quantities, setQuantities] = useState(
@@ -17,6 +18,9 @@ const OrderingPage = () => {
   );
 
   const [notes, setNotes] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const email = localStorage.getItem("email"); // ensure this is stored at login
 
   if (!orderItems.length) {
     return (
@@ -41,17 +45,47 @@ const OrderingPage = () => {
     return sum + item.price * qty;
   }, 0);
 
-  const handleProceedToPayment = () => {
-    navigate("/dashboard/paymentpage", {
-      state: {
-        orderItems: orderItems.map((item) => ({
-          ...item,
-          quantity: quantities[item.productId],
-        })),
-        total: updatedTotal.toFixed(2),
-        notes,
-      },
-    });
+  // ✅ Create order and navigate to payment
+  const handleProceedToPayment = async () => {
+    if (!email) {
+      alert("User email not found. Please log in again.");
+      navigate("/login");
+      return;
+    }
+
+    const orderDTO = {
+      orderItems: orderItems.map((item) => ({
+        productDTO: { productId: item.productId },
+        placedQty: quantities[item.productId],
+        orderedProductPrice: item.price,
+        discount: item.discount || 0,
+      })),
+      totalAmount: updatedTotal,
+      address: "Default Address", // You can add a form field for this later
+      payment: null, // will be updated after payment page
+    };
+
+    setLoading(true);
+
+    try {
+      const response = await axios.post(
+        `${ORDER_API_BASE}/create/${email}`,
+        orderDTO
+      );
+
+      const createdOrder = response.data;
+      console.log("✅ Order created successfully:", createdOrder);
+
+      // Navigate to Payment Page with order data
+      navigate("/dashboard/paymentpage", {
+        state: { order: createdOrder },
+      });
+    } catch (error) {
+      console.error("❌ Failed to create order:", error);
+      alert("Failed to create order. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -114,8 +148,12 @@ const OrderingPage = () => {
         <h5>
           Total: <strong>₹{updatedTotal.toFixed(2)}</strong>
         </h5>
-        <Button variant="success" onClick={handleProceedToPayment}>
-          Proceed to Payment
+        <Button
+          variant="success"
+          onClick={handleProceedToPayment}
+          disabled={loading}
+        >
+          {loading ? "Creating Order..." : "Proceed to Payment"}
         </Button>
       </div>
     </div>
