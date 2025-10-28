@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { CART_API_BASE } from "../misc/constants";
+import { CART_API_BASE, PAYMENT_API_BASE } from "../misc/constants";
 
 const PaymentPage = () => {
   const { state } = useLocation();
@@ -9,73 +9,109 @@ const PaymentPage = () => {
   const token = localStorage.getItem("token");
   const email = localStorage.getItem("email");
 
-  const { orderItems = [], total = 0 } = state || {};
+  const [order, setOrder] = useState(null);
 
-  const handlePayment = async (success = true) => {
-    if (!success) {
-      alert("❌ Payment failed. Your cart items are retained.");
+  useEffect(() => {
+    if (!state?.order) {
+      alert("❌ No order found to pay for.");
       navigate("/dashboard/mycart");
       return;
     }
+    setOrder(state.order);
+  }, [state, navigate]);
+
+  const handlePayment = async () => {
+    if (!order || !order.orderItems?.length) {
+      alert("❌ No items to pay for.");
+      return;
+    }
+
     try {
-      const productIds = orderItems.map((item) => item.productId);
-      await axios.delete(
-        `${CART_API_BASE}/userrelated/cart/${encodeURIComponent(
-          email
-        )}/products`,
+      // Prepare Stripe payment payload
+      const stripePayload = {
+        amount: order.totalAmount, // backend will convert to cents if needed
+        currency: "usd",
+        name: email,
+        email: email,
+        description: `Payment for order #${order.orderId}`,
+      };
+
+      // Call backend Stripe payment endpoint
+      const res = await axios.post(
+        `${PAYMENT_API_BASE}/stripe/test/${order.orderId}`,
+        stripePayload,
         {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          data: productIds,
         }
       );
-      alert("✅ Payment successful! Items removed from cart.");
-      navigate("/dashboard/myorders"); // or wherever you want after payment
-    } catch (err) {
-      console.error("Error removing items after payment", err);
-      alert("Payment succeeded but failed to update cart.");
+
+      const paymentDTO = res.data;
+
+      // Remove paid items from cart
+      const productIds = order.orderItems
+        .map((item) => item.productDTO?.productId)
+        .filter(Boolean);
+      if (productIds.length) {
+        await axios.delete(
+          `${CART_API_BASE}/userrelated/cart/${encodeURIComponent(
+            email
+          )}/products`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            data: productIds,
+          }
+        );
+      }
+
+      // ✅ Payment success alert
+      alert(
+        `✅ Payment successful!\nPayment ID: ${paymentDTO.paymentId}\nStatus: ${paymentDTO.pgStatus}`
+      );
+
       navigate("/dashboard/myorders");
+    } catch (err) {
+      console.error(err);
+      // ❌ Payment failure alert
+      alert(`❌ Payment failed: ${err.response?.data || err.message}`);
+      navigate("/dashboard/mycart");
     }
   };
 
-  if (!orderItems.length) {
-    return <div className="container mt-4">No items to pay for.</div>;
+  if (!order) {
+    return <div className="container mt-4">Loading order details...</div>;
   }
 
   return (
     <div className="container mt-4">
-      <h3>💳 Payment</h3>
+      <h3>💳 Payment for Order #{order.orderId}</h3>
       <ul className="list-group mb-3">
-        {orderItems.map((item) => (
+        {order.orderItems.map((item) => (
           <li
-            key={item.productId}
+            key={item.orderItemId}
             className="list-group-item d-flex justify-content-between"
           >
             <div>
-              {item.productName} × {item.quantity}
+              {item.productDTO?.productName || `Product #${item.orderItemId}`} ×{" "}
+              {item.placedQty}
             </div>
-            <div>₹{(item.price * item.quantity).toFixed(2)}</div>
+            <div>₹{item.orderedProductPrice.toFixed(2)}</div>
           </li>
         ))}
         <li className="list-group-item d-flex justify-content-between fw-bold">
           <div>Total</div>
-          <div>₹{total}</div>
+          <div>₹{order.totalAmount}</div>
         </li>
       </ul>
 
-      <div className="d-flex gap-3">
-        <button className="btn btn-success" onClick={() => handlePayment(true)}>
-          Simulate Payment Success
-        </button>
-        <button
-          className="btn btn-outline-danger"
-          onClick={() => handlePayment(false)}
-        >
-          Simulate Payment Failure
-        </button>
-      </div>
+      <button className="btn btn-success" onClick={handlePayment}>
+        Pay Now
+      </button>
     </div>
   );
 };
