@@ -13,6 +13,7 @@ const PaymentAdmin = () => {
   const fetchPayments = async () => {
     try {
       const response = await axios.get(`${PAYMENT_API_BASE}/admin/all`);
+      console.log("Fetched payments:", response.data);
       setPayments(response.data);
     } catch (error) {
       console.error("Error fetching payments:", error);
@@ -30,8 +31,14 @@ const PaymentAdmin = () => {
               <th>Method</th>
               <th>PG Payment ID</th>
               <th>PG Name</th>
-              <th>Response Message</th>
+              <th>Description</th>
               <th>Status</th>
+              <th>Amount</th>
+              <th>Currency</th>
+              <th>Customer Email</th>
+              <th>Customer Name</th>
+              <th>Order ID</th>
+              <th>Created At</th>
             </tr>
           </thead>
           <tbody className="text-center align-middle">
@@ -40,25 +47,31 @@ const PaymentAdmin = () => {
                 <tr key={payment.paymentId}>
                   <td>{payment.paymentId}</td>
                   <td>{payment.paymentMethod}</td>
-                  <td>{payment.pgPaymentId}</td>
-                  <td>{payment.pgName}</td>
-                  <td>{payment.pgResponseMessage}</td>
+                  <td>{payment.paymentIntentId}</td>
+                  <td>{payment.paymentGateway}</td>
+                  <td>{payment.description}</td>
                   <td>
                     <span
                       className={`badge ${
-                        payment.pgStatus === "Success"
+                        payment.status === "succeeded"
                           ? "bg-success"
                           : "bg-danger"
                       }`}
                     >
-                      {payment.pgStatus}
+                      {payment.status}
                     </span>
                   </td>
+                  <td>{payment.amount}</td>
+                  <td>{payment.currency}</td>
+                  <td>{payment.customerEmail}</td>
+                  <td>{payment.customerName}</td>
+                  <td>{payment.orderId}</td>
+                  <td>{new Date(payment.createdAt).toLocaleString()}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="6" className="text-center text-muted">
+                <td colSpan="12" className="text-center text-muted">
                   No payments found.
                 </td>
               </tr>
