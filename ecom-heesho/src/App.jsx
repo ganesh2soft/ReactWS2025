@@ -4,7 +4,6 @@ import "./App.css";
 import Home from "./components/Home";
 import Footer from "./components/Footer";
 import CategoryNavbar from "./components/CategoryNavbar";
-import Sidebar from "./components/Sidebar";
 import ProductsAdmin from "./components/adminFolder/ProductsAdmin";
 import OrdersAdmin from "./components/adminFolder/OrdersAdmin";
 import PaymentsAdmin from "./components/adminFolder/PaymentsAdmin";
@@ -39,7 +38,6 @@ function App() {
           <Navbar />
           <CategoryNavbar /> {/* Only once */}
           <div className="app-body" style={{ display: "flex" }}>
-            <Sidebar />
             <div className="app-content">
               <Routes>
                 <Route path="/" element={<Home />} />
