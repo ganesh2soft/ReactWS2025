@@ -66,7 +66,16 @@ const PaymentAdmin = () => {
                   <td>{payment.customerEmail}</td>
                   <td>{payment.customerName}</td>
                   <td>{payment.orderId}</td>
-                  <td>{new Date(payment.createdAt).toLocaleString()}</td>
+                  <td>
+                    {new Date(payment.createdAt).toLocaleString("en-US", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                    })}
+                  </td>
                 </tr>
               ))
             ) : (

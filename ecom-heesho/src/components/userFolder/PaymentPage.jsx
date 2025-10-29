@@ -1,7 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { CART_API_BASE, PAYMENT_API_BASE } from "../misc/constants";
+import {
+  CART_API_BASE,
+  PAYMENT_API_BASE,
+  ORDER_API_BASE,
+} from "../misc/constants";
 
 const PaymentPage = () => {
   const { state } = useLocation();
@@ -9,36 +13,28 @@ const PaymentPage = () => {
   const token = localStorage.getItem("token");
   const email = localStorage.getItem("email");
 
-  const [order, setOrder] = useState(null);
+  // When order data is passed from OrderingPage
+  const { order = {} } = state || {};
+  const { orderItems = [], totalAmount = 0, orderId } = order;
 
-  useEffect(() => {
-    if (!state?.order) {
-      alert("❌ No order found to pay for.");
-      navigate("/dashboard/mycart");
-      return;
-    }
-    setOrder(state.order);
-  }, [state, navigate]);
+  if (!orderItems.length) {
+    return <div className="container mt-4">⚠️ No items to pay for.</div>;
+  }
 
   const handlePayment = async () => {
-    if (!order || !order.orderItems?.length) {
-      alert("❌ No items to pay for.");
-      return;
-    }
-
     try {
-      // Prepare Stripe payment payload
+      // 1️⃣ Prepare Stripe payload
       const stripePayload = {
-        amount: order.totalAmount, // backend will convert to cents if needed
+        amount: totalAmount, // backend divides by 100
         currency: "usd",
         name: email,
         email: email,
-        description: `Payment for order #${order.orderId}`,
+        description: `Payment for order #${orderId}`,
       };
 
-      // Call backend Stripe payment endpoint
-      const res = await axios.post(
-        `${PAYMENT_API_BASE}/stripe/test/${order.orderId}`,
+      // 2️⃣ Call backend to create Stripe payment
+      const paymentRes = await axios.post(
+        `${PAYMENT_API_BASE}/stripe/test/${orderId}`,
         stripePayload,
         {
           headers: {
@@ -48,64 +44,72 @@ const PaymentPage = () => {
         }
       );
 
-      const paymentDTO = res.data;
+      const paymentDTO = paymentRes.data;
+      console.log("✅ Payment response:", paymentDTO);
+      const userId = localStorage.getItem("userId");
+      // 3️⃣ Fetch updated order (with payment info attached)
+      const orderRes = await axios.get(
+        `${ORDER_API_BASE}/userrelated/${userId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-      // Remove paid items from cart
-      const productIds = order.orderItems
-        .map((item) => item.productDTO?.productId)
-        .filter(Boolean);
-      if (productIds.length) {
-        await axios.delete(
-          `${CART_API_BASE}/userrelated/cart/${encodeURIComponent(
-            email
-          )}/products`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            data: productIds,
-          }
-        );
-      }
+      const updatedOrders = orderRes.data;
+      const updatedOrder = updatedOrders.find((o) => o.orderId === orderId);
+      console.log("🔄 Updated Order:", updatedOrder);
 
-      // ✅ Payment success alert
+      // 4️⃣ Remove items from cart (optional cleanup)
+      const productIds = orderItems.map(
+        (item) => item.productDTO?.productId || item.productId
+      );
+      await axios.delete(
+        `${CART_API_BASE}/userrelated/cart/${encodeURIComponent(
+          email
+        )}/products`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          data: productIds,
+        }
+      );
+
+      // 5️⃣ Success message
       alert(
-        `✅ Payment successful!\nPayment ID: ${paymentDTO.paymentId}\nStatus: ${paymentDTO.pgStatus}`
+        `✅ Payment successful!\nOrder #${orderId}\nStatus: ${
+          updatedOrder?.payment?.pgStatus || "Success"
+        }\nGateway: ${updatedOrder?.payment?.pgName || "Stripe"}`
       );
 
       navigate("/dashboard/myorders");
     } catch (err) {
-      console.error(err);
-      // ❌ Payment failure alert
+      console.error("❌ Payment failed:", err);
       alert(`❌ Payment failed: ${err.response?.data || err.message}`);
       navigate("/dashboard/mycart");
     }
   };
 
-  if (!order) {
-    return <div className="container mt-4">Loading order details...</div>;
-  }
-
   return (
     <div className="container mt-4">
-      <h3>💳 Payment for Order #{order.orderId}</h3>
+      <h3>💳 Payment for Order #{orderId}</h3>
+
       <ul className="list-group mb-3">
-        {order.orderItems.map((item) => (
+        {orderItems.map((item) => (
           <li
             key={item.orderItemId}
             className="list-group-item d-flex justify-content-between"
           >
             <div>
-              {item.productDTO?.productName || `Product #${item.orderItemId}`} ×{" "}
-              {item.placedQty}
+              {item.productDTO?.productName || "Product"} × {item.placedQty}
             </div>
-            <div>₹{item.orderedProductPrice.toFixed(2)}</div>
+            <div>₹{(item.orderedProductPrice * item.placedQty).toFixed(2)}</div>
           </li>
         ))}
         <li className="list-group-item d-flex justify-content-between fw-bold">
           <div>Total</div>
-          <div>₹{order.totalAmount}</div>
+          <div>₹{totalAmount}</div>
         </li>
       </ul>
 

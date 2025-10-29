@@ -96,14 +96,13 @@ const MyOrderHistory = () => {
           {selectedOrder ? (
             <div>
               <p>
-                <strong>Date:</strong>{" "}
-                {new Date(selectedOrder.orderDate).toLocaleString()}
-              </p>
-              <p>
                 <strong>Status:</strong> {selectedOrder.orderStatus}
               </p>
               <p>
                 <strong>Address:</strong> {selectedOrder.address}
+              </p>
+              <p>
+                <strong>Order Date:</strong> {selectedOrder.orderDate}
               </p>
               <hr />
               <h6>Items:</h6>
@@ -148,24 +147,21 @@ const MyOrderHistory = () => {
                 <hr />
                 <h6>Payment Details:</h6>
                 <p>
+                  <strong>Your Email:</strong>{" "}
+                  {selectedOrder.payment?.customerEmail || "N/A"}
+                </p>
+                <p>
                   <strong>Payment ID:</strong>{" "}
                   {selectedOrder.payment?.paymentId || "N/A"}
                 </p>
                 <p>
-                  <strong>Method:</strong>{" "}
-                  {selectedOrder.payment?.paymentMethod || "N/A"}
+                  <strong>Amount:</strong>{" "}
+                  {selectedOrder.payment?.amount || "N/A"}
                 </p>
-                <p>
-                  <strong>PG Payment ID:</strong>{" "}
-                  {selectedOrder.payment?.pgPaymentId || "N/A"}
-                </p>
+
                 <p>
                   <strong>Status:</strong>{" "}
-                  {selectedOrder.payment?.pgStatus || "N/A"}
-                </p>
-                <p>
-                  <strong>Response Message:</strong>{" "}
-                  {selectedOrder.payment?.pgResponseMessage || "N/A"}
+                  {selectedOrder.payment?.status || "N/A"}
                 </p>
               </div>
             </div>
